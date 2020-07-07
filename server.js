@@ -15,7 +15,7 @@ app.set('view engine', 'pug');
 
 app.route("/").get((req, res) => {
   // process.cwd means current working directory
-  res.render( process.cwd() + '/views/pug/index.pug' ) ;
+  res.render( __dirname + '/views/pug/index.pug' ) ;
 
 });
 
