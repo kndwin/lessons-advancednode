@@ -14,8 +14,12 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'pug');
 
 app.route("/").get((req, res) => {
-  // process.cwd means current working directory
-  res.render( __dirname + '/views/pug/index.pug' ) ;
+  // process.cwd() means current working directory
+  // __dirname
+  res.render( __dirname + '/views/pug/index.pug' , { 
+    title: "Hello",
+    message: "Please login"
+  }) ;
 
 });
 
