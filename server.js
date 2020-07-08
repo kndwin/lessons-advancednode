@@ -5,6 +5,7 @@ const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const pug = require("pug");
 const session = require("express-session");
 const passport = require("passport");
+require('dotenv').config();
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use("/public", express.static(process.cwd() + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ // you can create sessions (useful to auth later)
-  secret: 'itsgonnabeokay',
+  secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true
 }))
