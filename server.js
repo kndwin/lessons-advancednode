@@ -9,6 +9,10 @@ const passport = require("passport");
 
 const app = express();
 
+let done = (err, data) => {
+  console.log( err ? `Error: ${err}` : `Sucess!: ${data}`)
+}
+
 fccTesting(app); //For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
 app.use(express.json());
@@ -24,6 +28,10 @@ app.use(session({ // you can create sessions (useful to auth later)
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.serializeUser(( user, done ) => {
+  done( null, user._id )
+})
 
 app.route("/").get((req, res) => {
   // process.cwd() means current working directory
