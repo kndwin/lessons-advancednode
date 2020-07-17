@@ -5,7 +5,9 @@ const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const pug = require("pug");
 const session = require("express-session");
 const passport = require("passport");
+const ObjectID = require("mongodb").ObjectID;
 // require('dotenv').config();
+
 
 const app = express();
 
@@ -31,6 +33,14 @@ app.use(passport.session());
 
 passport.serializeUser(( user, done ) => {
   done( null, user._id )
+})
+
+passport.deserializeUser(( id, done ) => {
+//  db.collection('users').findOne(
+//    { _id: new ObjectID( id ) },
+//    ( err, doc ) => { done(null,doc) }
+//  )
+  done (null, null)
 })
 
 app.route("/").get((req, res) => {
