@@ -19,6 +19,12 @@ let done = (err, data) => {
   console.log( err ? `Error: ${err}` : `Sucess!: ${data}`)
 }
 
+function ensureAuthenticated (req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
 
 fccTesting(app); //For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
@@ -80,11 +86,9 @@ mongo.connect(process.env.DATABASE, (err, db) => {
 
     app.route('/profile').get(
       // ensures authenticattion works before displaying the profile
-      (req, res, next) => {
-        if(req.isAuthenticated()){ return next() }
-        res.redirect('/')
-      },
-      (req, res) => res.render(process.cwd() + '/views/pug/profile')
+      ensureAuthenticated,(req, res) => {
+        res.render(process.cwd() + '/views/pug/profile')
+      }
     )
 
     app.listen(process.env.PORT || 3000, () => {
