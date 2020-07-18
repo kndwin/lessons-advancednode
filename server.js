@@ -75,7 +75,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       res.render( process.cwd() + '/views/pug/index.pug' , { 
         title: "Hello", // You can pass variables to .pug files!
         message: "Home Page",
-        showLogin: true
+        showLogin: true,
       });
     });
 
@@ -88,7 +88,9 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     app.route('/profile').get(
       // ensures authenticattion works before displaying the profile
       ensureAuthenticated,(req, res) => {
-        res.render(process.cwd() + '/views/pug/profile')
+        res.render(process.cwd() + '/views/pug/profile', {
+          username: req.user
+        })
       }
     )
 
