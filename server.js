@@ -74,7 +74,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       // process.cwd() means current working directory
       res.render( process.cwd() + '/views/pug/index.pug' , { 
         title: "Hello", // You can pass variables to .pug files!
-        message: "Please login",
+        message: "Home Page",
         showLogin: true
       });
     });
