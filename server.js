@@ -67,9 +67,20 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       // process.cwd() means current working directory
       res.render( process.cwd() + '/views/pug/index.pug' , { 
         title: "Hello", // You can pass variables to .pug files!
-        message: "Please login"
-      }) ;
+        message: "Please login",
+        showLogin: true
+      });
     });
+
+    // 
+    app.route('/login').post(
+      passport.authenticate('local', { failureRedirect: '/' }),
+      (req, res) => res.redirect('/profile')
+    )
+
+    app.route('/profile').get((req, res) => {
+      res.render(process.cwd() + '/views/pug/profile')
+    })
 
     app.listen(process.env.PORT || 3000, () => {
       console.log("Listening on port " + process.env.PORT);
