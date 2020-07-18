@@ -6,14 +6,18 @@ const pug = require("pug");
 const session = require("express-session");
 const passport = require("passport");
 const ObjectID = require("mongodb").ObjectID;
-// require('dotenv').config();
+const mongo = require('mongodb').MongoClient;
 
+if (process.env.NODE_ENV= 'production') {
+  require('dotenv').config();
+}
 
 const app = express();
 
 let done = (err, data) => {
   console.log( err ? `Error: ${err}` : `Sucess!: ${data}`)
 }
+
 
 fccTesting(app); //For FCC testing purposes
 app.use("/public", express.static(process.cwd() + "/public"));
@@ -31,27 +35,31 @@ app.use(session({ // you can create sessions (useful to auth later)
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser(( user, done ) => {
-  done( null, user._id )
+mongo.connect(process.env.DATABASE, (err, db) => {
+  if (err) { console.log(`Database error: ${err}`) }
+  else {
+    console.log(`Sucessful database connection`)
+    passport.serializeUser(( user, done ) => {
+      done( null, user._id )
+    })
+
+    passport.deserializeUser(( id, done ) => {
+      db.collection('users').findOne(
+        { _id: new ObjectID( id ) },
+        ( err, doc ) => { done(null,doc) }
+      )
+    })
+
+    app.route("/").get((req, res) => {
+      // process.cwd() means current working directory
+      res.render( process.cwd() + '/views/pug/index.pug' , { 
+        title: "Hello", // You can pass variables to .pug files!
+        message: "Please login"
+      }) ;
+    });
+
+    app.listen(process.env.PORT || 3000, () => {
+      console.log("Listening on port " + process.env.PORT);
+    });
+  }
 })
-
-passport.deserializeUser(( id, done ) => {
-//  db.collection('users').findOne(
-//    { _id: new ObjectID( id ) },
-//    ( err, doc ) => { done(null,doc) }
-//  )
-  done (null, null)
-})
-
-app.route("/").get((req, res) => {
-  // process.cwd() means current working directory
-  res.render( process.cwd() + '/views/pug/index.pug' , { 
-    title: "Hello", // You can pass variables to .pug files!
-    message: "Please login"
-  }) ;
-
-});
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Listening on port " + process.env.PORT);
-});
