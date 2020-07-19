@@ -89,7 +89,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       // ensures authenticattion works before displaying the profile
       ensureAuthenticated,(req, res) => {
         res.render(process.cwd() + '/views/pug/profile', {
-          username: req.user
+          username: req.body.username
         })
       }
     )
