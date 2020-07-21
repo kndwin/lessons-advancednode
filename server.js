@@ -23,7 +23,7 @@ function ensureAuthenticated (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    return res.redirect('/');
+    res.redirect('/');
   }
 }
 
@@ -88,7 +88,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     app.route('/profile').get(
       // ensures authenticattion works before displaying the profile
       ensureAuthenticated,(req, res) => {
-        res.render(process.cwd() + '/views/pug/profile', {
+        res.render(process.cwd() + '/views/pug/profile.pug', {
           username: req.body.username
         })
       }
