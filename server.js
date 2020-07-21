@@ -44,12 +44,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongo.connect(process.env.DATABASE, (err, db) => {
-  if (err) { console.log(`Database error: ${err}`) }
-  else {
+  if (err) { 
+    console.log(`Database error: ${err}`)
+  } else {
     console.log(`Sucessful database connection`)
     passport.serializeUser(( user, done ) => {
       done( null, user._id )
     })
+
+    app.listen(process.env.PORT || 3000, () => {
+      console.log("Listening on port " + process.env.PORT);
+    });
 
     passport.deserializeUser(( id, done ) => {
       db.collection('users').findOne(
@@ -88,14 +93,12 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     app.route('/profile').get(
       // ensures authenticattion works before displaying the profile
       ensureAuthenticated,(req, res) => {
-        res.render(process.cwd() + '/views/pug/profile.pug', {
-          username: req.body.username
+        console.log(req.user);
+        res.render(process.cwd() + '/views/pug/profile', {
+          username: req.user.username
         })
       }
     )
 
-    app.listen(process.env.PORT || 3000, () => {
-      console.log("Listening on port " + process.env.PORT);
-    });
   }
 })
