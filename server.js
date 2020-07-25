@@ -74,10 +74,6 @@ mongo.connect(process.env.DATABASE, (err, db) => {
         })
       }
     ))
-    // Middleware for 404 errors
-    app.use((req, res, next) => {
-      res.status(404).type('text').send('Not Found');
-    })
 
     // Home page
     app.route("/").get((req, res) => {
@@ -105,6 +101,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       }
     )
     
+
     app.route('/logout').get((req, res) => {
       req.logout();
       res.redirect("/");
@@ -134,5 +131,9 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       }
     })
 
+    // Middleware for 404 errors
+    app.use((req, res, next) => {
+      res.status(404).type('text').send('Not Found');
+    })
   }
 })
