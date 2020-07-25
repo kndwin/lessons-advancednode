@@ -78,17 +78,16 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       }
     ))
 
-    // Home page
     app.route("/").get((req, res) => {
       // process.cwd() means current working directory
       res.render( process.cwd() + '/views/pug/index.pug' , { 
         title: "Hello", // You can pass variables to .pug files!
         message: "Home Page",
         showLogin: true,
+        showRegistration: true
       });
     });
     
-    // Before redirecting to profile, we run passport.authenticate
     app.route('/login').post(
       passport.authenticate('local', { failureRedirect: '/' })
       ,(req, res) => {
@@ -97,7 +96,6 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     )
 
     app.route('/profile').get(
-      // ensures authenticattion works before displaying the profile
       ensureAuthenticated,(req, res) => {
         console.log(req.user);
         res.render(process.cwd() + '/views/pug/profile', {
@@ -106,13 +104,14 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       }
     )
     
-    app.route('/register').post((req, res, next) => {
-      db.collection('users').findOne({ username: req.body.username }), (err, user) => {
+    app.route('/register').post(
+      (req, res, next) => {
+        db.collection('users').findOne({ username: req.body.username }), (err, user) => {
         if (err) {
           next(err)
         } else if (user) {
           res.redirect('/')
-        } else {
+          } else {
           db.collection('users').insertOne({
             username: req.body.username,
             password: req.body.password
