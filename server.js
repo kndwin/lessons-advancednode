@@ -74,7 +74,12 @@ mongo.connect(process.env.DATABASE, (err, db) => {
         })
       }
     ))
+    // Middleware for 404 errors
+    app.use((req, res, next) => {
+      res.status(404).type('text').send('Not Found');
+    })
 
+    // Home page
     app.route("/").get((req, res) => {
       // process.cwd() means current working directory
       res.render( process.cwd() + '/views/pug/index.pug' , { 
@@ -83,8 +88,8 @@ mongo.connect(process.env.DATABASE, (err, db) => {
         showLogin: true,
       });
     });
-
-    // before redirecting to profile, we run passport.authenticate
+    
+    // Before redirecting to profile, we run passport.authenticate
     app.route('/login').post(
       passport.authenticate('local', { failureRedirect: '/' }),
       (req, res) => res.redirect('/profile')
@@ -105,8 +110,29 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       res.redirect("/");
     })
 
-    app.use((req, res, next) => {
-      res.status(404).type('text').send('Not Found');
+    app.route('/register').post((req, res, next) => {
+      db.collection('users').findOne({ username: req.body.username }), (err, user) => {
+        if (err) {
+          next(err)
+        } else if (user) {
+          res.redirect('/')
+        } else {
+          db.collection('users').insertOne({
+            username: req.body.username,
+            password: req.body.password
+          }, (err, doc) => {
+            if (err) {
+              res.redirect('/')
+            } else {
+              next(null, user);
+            }
+          })
+        }
+      }, passport.authenticate('local', { failureRedirect: '/' })
+      , (req, res, next) => { 
+        res.redirect('/profile') 
+      }
     })
+
   }
 })
