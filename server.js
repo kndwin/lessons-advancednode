@@ -99,6 +99,14 @@ mongo.connect(process.env.DATABASE, (err, db) => {
         })
       }
     )
+    
+    app.route('/logout').get((req, res) => {
+      res.logout();
+      res.redirect("/");
+    })
 
+    app.use((req, res, next) => {
+      res.status(404).type('text').send('Not Found');
+    })
   }
 })
