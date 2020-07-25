@@ -52,9 +52,6 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       done( null, user._id )
     })
 
-    app.listen(process.env.PORT || 3000, () => {
-      console.log("Listening on port " + process.env.PORT);
-    });
 
     passport.deserializeUser(( id, done ) => {
       db.collection('users').findOne(
@@ -67,9 +64,15 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       function( username, password, done ) {
         db.collection('users').findOne({ username: username }, (err, user) => {
           console.log('User ' + username + ' attempted to log in.');
-          if (err) { return done(err) }
-          if (!user) { return done(null, false) }
-          if (password !== user.password) { return done(null, false) }
+          if (err) { 
+            return done(err) 
+          }
+          if (!user) { 
+            return done(null, false) 
+          }
+          if (password !== user.password) { 
+            return done(null, false) 
+          }
           return done( null, user )
         })
       }
@@ -87,8 +90,10 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     
     // Before redirecting to profile, we run passport.authenticate
     app.route('/login').post(
-      passport.authenticate('local', { failureRedirect: '/' }),
-      (req, res) => res.redirect('/profile')
+      passport.authenticate('local', { failureRedirect: '/' })
+      ,(req, res) => {
+        res.redirect('/profile')
+      }
     )
 
     app.route('/profile').get(
@@ -101,12 +106,6 @@ mongo.connect(process.env.DATABASE, (err, db) => {
       }
     )
     
-
-    app.route('/logout').get((req, res) => {
-      req.logout();
-      res.redirect("/");
-    })
-
     app.route('/register').post((req, res, next) => {
       db.collection('users').findOne({ username: req.body.username }), (err, user) => {
         if (err) {
@@ -121,19 +120,28 @@ mongo.connect(process.env.DATABASE, (err, db) => {
             if (err) {
               res.redirect('/')
             } else {
-              next(null, user);
+              next(null, user)
             }
           })
         }
-      }, passport.authenticate('local', { failureRedirect: '/' })
-      , (req, res, next) => { 
+      },passport.authenticate('local', { failureRedirect: '/' })
+      ,(req, res, next) => { 
         res.redirect('/profile') 
       }
+    })
+
+    app.route('/logout').get((req, res) => {
+      req.logout()
+      res.redirect("/")
     })
 
     // Middleware for 404 errors
     app.use((req, res, next) => {
       res.status(404).type('text').send('Not Found');
     })
+
+    app.listen(process.env.PORT || 3000, () => {
+      console.log("Listening on port " + process.env.PORT);
+    });
   }
 })
