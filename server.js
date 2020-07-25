@@ -101,7 +101,7 @@ mongo.connect(process.env.DATABASE, (err, db) => {
     )
     
     app.route('/logout').get((req, res) => {
-      res.logout();
+      req.logout();
       res.redirect("/");
     })
 
