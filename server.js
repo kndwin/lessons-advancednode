@@ -43,7 +43,8 @@ app.use(session({ // you can create sessions (useful to auth later)
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongo.connect(process.env.DATABASE, (err, db) => {
+mongo.connect(process.env.DATABASE, (err, client) => {
+  let db = client.db("dev")
   if (err) { 
     console.log(`Database error: ${err}`)
   } else {
