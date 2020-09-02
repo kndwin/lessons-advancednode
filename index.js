@@ -9,7 +9,7 @@ const ObjectID = require("mongodb").ObjectID;
 const mongo = require('mongodb').MongoClient;
 const LocalStrategy = require('passport-local');
 
-if (process.env.NODE_ENV= 'production') {
+if (process.env.NODE_ENV != 'production') {
   require('dotenv').config();
 }
 
@@ -45,10 +45,6 @@ app.use(passport.session());
 
 mongo.connect(process.env.DATABASE, (err, client) => {
   let db = client.db("dev");
-  console.log("==== client =====")
-  console.log(client)
-  console.log("==== db =====")
-  console.log(db)
   if (err) { 
     console.log(`Database error: ${err}`)
   } else {
@@ -144,6 +140,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
             }
           )
         }
+      )
 
     app.route('/logout').get((req, res) => {
       req.logout()
