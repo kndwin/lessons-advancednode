@@ -8,6 +8,7 @@ const passport = require("passport");
 const ObjectID = require("mongodb").ObjectID;
 const mongo = require('mongodb').MongoClient;
 const LocalStrategy = require('passport-local');
+const hash = require('bcrypt');
 
 if (process.env.NODE_ENV != 'production') {
   require('dotenv').config();
@@ -71,7 +72,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
           if (!user) { 
             return done(null, false) 
           }
-          if (password !== user.password) { 
+          if (!bcrypt.compareSync(password, user.password)) { 
             return done(null, false) 
           }
           return done( null, user )
@@ -106,7 +107,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
     
     app.route('/register')
       .post((req, res, next) => {
-        console.log("Posting?")
+        const hash = bcrypt.hashSync(req.body.password, 12);
         db.collection('users')
           .findOne({ username: req.body.username }, (err, user) => {
             console.log("I'm in")
