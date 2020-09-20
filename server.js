@@ -8,6 +8,7 @@ const passport = require("passport");
 const ObjectID = require("mongodb").ObjectID;
 const mongo = require('mongodb').MongoClient;
 const LocalStrategy = require('passport-local');
+const hash = require('bcrypt');
 
 if (process.env.NODE_ENV= 'production') {
   require('dotenv').config();
