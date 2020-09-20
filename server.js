@@ -72,7 +72,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
           if (!user) { 
             return done(null, false) 
           }
-          if (!bcrypt.compareSync(password, user.password) { 
+          if (!bcrypt.compareSync(password, user.password)) { 
             return done(null, false) 
           }
           return done( null, user )
@@ -110,7 +110,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
     
     app.route('/register')
       .post((req, res, next) => {
-        const hash = bcrypt.hashSync(req.body.passowrd, 12)
+        const hash = bcrypt.hashSync(req.body.password, 12)
         db.collection('users')
           .findOne(
           {username: req.body.username}
