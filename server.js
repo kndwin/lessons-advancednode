@@ -110,6 +110,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
     
     app.route('/register')
       .post((req, res, next) => {
+        const hash = bcrypt.hashSync(req.body.passowrd, 12)
         db.collection('users')
           .findOne(
           {username: req.body.username}
@@ -120,10 +121,10 @@ mongo.connect(process.env.DATABASE, (err, client) => {
               res.redirect('/')
             } else {
               db.collection('users')
-                .insertOne(
-                {username: req.body.username,
-                  password: hash}
-                ,(err, user) => {
+                .insertOne({
+                  username: req.body.username,
+                  password: hash
+                },(err, user) => {
                   if (err) {
                     res.redirect('/')
                   } else {
