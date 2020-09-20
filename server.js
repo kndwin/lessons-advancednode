@@ -121,7 +121,7 @@ mongo.connect(process.env.DATABASE, (err, client) => {
               db.collection('users')
                 .insertOne(
                 {username: req.body.username,
-                  password: req.body.password}
+                  password: hash}
                 ,(err, user) => {
                   if (err) {
                     res.redirect('/')
