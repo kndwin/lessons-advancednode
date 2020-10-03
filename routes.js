@@ -22,34 +22,42 @@ module.exports = function (app, database) {
         title: "Hello", // You can pass variables to .pug files!
         message: "Home Page",
         showLogin: true,
-        showRegistration: true
+        showRegistration: true,
+        showSocialAuth: true
       })
     })
   
   app.route('/login')
-    .post(
-      passport.authenticate(
-        'local', { failureRedirect: '/' }
-      ),(req, res) => {
-        res.redirect('/profile')
-      }
-    )
+    .post(passport.authenticate('local', { 
+      failureRedirect: '/' 
+    }),(req, res) => {
+      res.redirect('/profile')
+    })
+
+  app.route('/auth/github')
+    .post(passport.authenticate('github'))
+
+  app.route('/auth/github/callback')
+    .post(passport.authenticate('github', {
+      failureRedirect: '/'
+    }), (req, res) => {
+      res.redirect('/profile')
+    })
 
   app.route('/profile')
     .get(ensureAuthenticated,(req, res) => {
       res.render(process.cwd() + '/views/pug/profile', {
         username: req.user.username
       })
-    }
-  )
+    })
   
   app.route('/register')
     .post((req, res, next) => {
       const hash = bcrypt.hashSync(req.body.password, 12)
       database.collection('users')
-        .findOne(
-        {username: req.body.username}
-        ,(err, user) => {
+        .findOne({
+          username: req.body.username
+        },(err, user) => {
           if (err) {
             next(err)
           } else if (user) {
@@ -74,9 +82,8 @@ module.exports = function (app, database) {
       'local',{failureRedirect: '/'}
       ),(req, res, next) => {
         res.redirect('profile')
-      }
-    )
-
+      })
+  
   app.route('/logout')
     .get((req, res) => {
       req.logout()
