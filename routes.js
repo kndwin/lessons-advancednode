@@ -35,10 +35,10 @@ module.exports = function (app, database) {
     })
 
   app.route('/auth/github')
-    .post(passport.authenticate('github'))
+    .get(passport.authenticate('github'))
 
   app.route('/auth/github/callback')
-    .post(passport.authenticate('github', {
+    .get(passport.authenticate('github', {
       failureRedirect: '/'
     }), (req, res) => {
       res.redirect('/profile')
