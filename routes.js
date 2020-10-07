@@ -72,10 +72,10 @@ module.exports = function (app, database) {
       res.redirect("/")
     })
 
-  app.route('/auth/github').get(passport.authenticate('github'))
+  app.route('/auth/github').get(passport.authenticate('github'));
 
   app.route('/auth/github/callback').get(passport.authenticate('github', {failureRedirect: '/'}), (req, res) => {
-    res.redirect('/profile')
+    res.redirect('/profile');
   })
 
   app.use((req, res, next) => {
